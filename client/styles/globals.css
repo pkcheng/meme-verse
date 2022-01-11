@@ -1,0 +1,48 @@
+.navbar {
+  background-color: #13242c;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+}
+
+body {
+  background-color: #f7f7fc;
+}
+
+.meme {
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+form .form-control {
+  border-radius: 15px;
+}
+
+form .css-1s2u09g-control {
+  border-radius: 15px;
+}
+
+form .btn {
+  border-radius: 15px;
+}
+
+.btn-left {
+  border-bottom-left-radius: 15px !important;
+  background-color: white;
+}
+.btn-right {
+  border-bottom-right-radius: 15px !important;
+  background-color: white;
+}
+
+.profile-btn {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  background-color: rgb(33, 82, 172);
+}
+
+.post-creator {
+  background-color: white;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
