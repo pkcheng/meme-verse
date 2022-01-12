@@ -73,11 +73,7 @@ const Navbar = ({ user, setUser }) => {
                 </a>
               </Link>
             </li>
-            <li className="nav-item mx-2">
-              <Link href="/category">
-                <a className="nav-link">Category</a>
-              </Link>
-            </li>
+
             {user ? (
               <li className="nav-item mx-2">
                 <Link href="/post">
@@ -87,6 +83,12 @@ const Navbar = ({ user, setUser }) => {
             ) : (
               ""
             )}
+
+            <li className="nav-item mx-2">
+              <Link href="/category">
+                <a className="nav-link">Category</a>
+              </Link>
+            </li>
             <li className="nav-item mx-2">
               <Link href="/about">
                 <a className="nav-link">About</a>
@@ -113,7 +115,10 @@ const Navbar = ({ user, setUser }) => {
                 aria-labelledby="dropdownMenuButton1"
               >
                 <li>
-                  <Link href="/likedMeme">
+                  <Link href="/meme/me">
+                    <a className="dropdown-item">Posted Meme</a>
+                  </Link>
+                  <Link href="/me">
                     <a className="dropdown-item">Liked Meme</a>
                   </Link>
                 </li>

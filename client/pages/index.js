@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 import MemeCard from "../components/MemeCard";
 
 export default function Home({ user }) {
@@ -12,6 +13,7 @@ export default function Home({ user }) {
     likedBy: [],
   });
   const [meme, setMeme] = useState([]);
+  const [category, setCategory] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
@@ -24,11 +26,17 @@ export default function Home({ user }) {
     await axios.get("http://localhost:5000/api/meme").then((res) => {
       setMeme(res.data);
     });
+    await axios.get("http://localhost:5000/api/category").then((res) => {
+      setCategory(res.data);
+    });
   };
+
   useEffect(async () => {
     setLoading(true);
     await loadData();
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 250);
   }, []);
 
   return (
@@ -47,65 +55,48 @@ export default function Home({ user }) {
               {/* Most Liked Meme */}
               <div className="col-lg-6 col-md-12 mb-3">
                 <h4>Most Liked Meme</h4>
-                <div className="meme bg-white">
-                  <div className="text-center p-3">
-                    <img
-                      style={{
-                        width: "auto",
-                        height: "auto",
-                        maxWidth: "300px",
-                        minHeight: "250px",
-                        maxHeight: "250px",
-                      }}
-                      className="rounded"
-                      src={topMeme.image.link}
-                    />
-                  </div>
-                  <div className="mt-2 btn-group w-100">
-                    <button className="btn btn-right btn-light">
-                      <i className="bi bi-share"></i>
-                    </button>
-                  </div>
-                </div>
+                <MemeCard id={topMeme._id} user={user} />
               </div>
               {/* Latest Meme */}
               <div className="col-lg-6 col-md-12 mb-3">
                 <h4>Latest Meme</h4>
-                <div className="meme bg-white">
-                  <div className="text-center p-3">
-                    <img
-                      style={{
-                        width: "auto",
-                        height: "auto",
-                        maxWidth: "300px",
-                        minHeight: "250px",
-                        maxHeight: "250px",
-                      }}
-                      className="rounded"
-                      src={latestMeme ? latestMeme.image.link : ""}
-                    />
-                  </div>
-                  <div className="mt-2 btn-group w-100">
-                    <button className="btn btn-right btn-light">
-                      <i className="bi bi-share"></i>
-                    </button>
-                  </div>
-                </div>
+                <MemeCard id={latestMeme._id} user={user} />
               </div>
             </div>
             {/* Trending */}
             <div className="row mt-2">
               <h3>Trending</h3>
               {meme.map((m, index) => {
-                return <MemeCard key={index} id={m._id} user={user} />;
+                return (
+                  <div className="col-lg-4 col-sm-12 col-md-6 mb-3" key={index}>
+                    <MemeCard id={m._id} user={user} />
+                  </div>
+                );
               })}
             </div>
           </div>
 
           {/* Right Panel */}
           <div className="col-lg-3 col-sm-12">
-            <h4 className="opacity-0">.</h4>
-            <div className="meme bg-white p-3 text-center"></div>
+            <h4>Category</h4>
+            <div className="meme bg-white p-3">
+              <div className="row">
+                {category.map((c, index) => {
+                  return (
+                    <div key={index} className="col-12 text-center">
+                      <Link href={`/category/${c._id}`}>
+                        <a
+                          className="btn btn-dark w-75 my-1"
+                          style={{ borderRadius: "15px" }}
+                        >
+                          {c.title}
+                        </a>
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       )}

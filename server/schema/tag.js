@@ -6,10 +6,6 @@ const tagSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  memes: {
-    type: [String],
-    required: false,
-  },
 });
 
 const Tag = mongoose.model("tag", tagSchema, "tag");

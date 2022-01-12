@@ -1,12 +1,13 @@
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import swal from "sweetalert";
 import Link from "next/link";
 
 const MemeCard = ({ id, user }) => {
   const router = useRouter();
   const [likedBy, setLikedBy] = useState([]);
+  const [createdBy, setCreatedBy] = useState("");
   const [image, setImage] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -14,14 +15,27 @@ const MemeCard = ({ id, user }) => {
     await axios.get(`http://localhost:5000/api/meme/${id}`).then((res) => {
       setLikedBy(res.data.likedBy);
       setImage(res.data.image);
+      setCreatedBy(res.data.createdBy);
     });
   };
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(`${window.location.host}/meme/${id}`);
+    swal("Link Copied", "Paste the link and share the meme with others!");
+  };
+
+  const handleDelete = async () => {
+    await axios.delete(`http://localhost:5000/api/meme/${id}`);
+    window.location.reload();
+  };
+
   useEffect(async () => {
-    setLoading(true);
-    await loadData();
-    setLoading(false);
-  }, []);
+    if (id) {
+      setLoading(true);
+      await loadData();
+      setLoading(false);
+    }
+  }, [id]);
 
   const handleLike = async () => {
     if (user) {
@@ -36,7 +50,7 @@ const MemeCard = ({ id, user }) => {
   };
 
   return (
-    <div className="col-lg-4 col-sm-12 col-md-6 mb-3">
+    <>
       {loading ? (
         <div className="text-center">
           <div className="spinner-grow" role="status">
@@ -44,9 +58,31 @@ const MemeCard = ({ id, user }) => {
           </div>
         </div>
       ) : (
-        <div className="meme bg-white">
-          <Link href={`/meme/${id}`}>
-            <div className="text-center p-3" style={{ cursor: "pointer" }}>
+        <div className="meme bg-white" style={{ position: "relative" }}>
+          {user && createdBy === user._id ? (
+            <>
+              <button
+                className="btn btn-light px-0 py-0"
+                style={{ position: "absolute", right: "2px", top: "2px" }}
+                id="memeDropDown"
+                data-bs-toggle="dropdown"
+              >
+                <i className="bi bi-three-dots-vertical"></i>
+              </button>
+              <ul className="dropdown-menu" aria-labelledby="memeDropDown">
+                <li>
+                  <a className="dropdown-item" href="#" onClick={handleDelete}>
+                    Delete
+                  </a>
+                </li>
+              </ul>
+            </>
+          ) : (
+            <></>
+          )}
+
+          <div className="text-center p-3">
+            <Link href={`/meme/${id}`}>
               <img
                 style={{
                   width: "auto",
@@ -54,12 +90,13 @@ const MemeCard = ({ id, user }) => {
                   maxWidth: "260px",
                   minHeight: "200px",
                   maxHeight: "200px",
+                  cursor: "pointer",
                 }}
                 className="rounded"
                 src={image.link}
               />
-            </div>
-          </Link>
+            </Link>
+          </div>
 
           <div className="mt-2 btn-group w-100">
             <button className="btn btn-left btn-light" onClick={handleLike}>
@@ -75,13 +112,13 @@ const MemeCard = ({ id, user }) => {
               &nbsp;
               {likedBy.length}
             </button>
-            <button className="btn btn-right btn-light">
+            <button className="btn btn-right btn-light" onClick={handleShare}>
               <i className="bi bi-share"></i>
             </button>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

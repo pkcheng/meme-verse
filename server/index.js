@@ -17,17 +17,6 @@ const Meme = require("./schema/meme");
 const Category = require("./schema/category");
 const Tag = require("./schema/tag");
 
-const addMemeToTag = (tagId, memeId) => {
-  Tag.findById(tagId, (err, doc) => {
-    if (err) {
-      console.log(err);
-    } else {
-      doc.memes.push(memeId);
-      doc.save();
-    }
-  });
-};
-
 // AUTH
 app.post("/api/login", (req, res) => {
   const email = req.body.email;
@@ -145,9 +134,6 @@ app.post("/api/meme", (req, res) => {
             .then((doc) => {
               usr.createdMemes.push(doc._id);
               usr.save();
-              for (let i = 0; i < req.body.tag.length; i++) {
-                addMemeToTag(req.body.tag[i].value, doc._id);
-              }
               res.send(doc);
             })
             .catch((err) => {
@@ -198,14 +184,18 @@ app.post("/api/likeMeme", async (req, res) => {
 
 // GET
 app.get("/api/user/:id", (req, res) => {
-  User.findById(req.params.id, (err, doc) => {
-    if (err) {
-      res.status(400);
-      res.send(err);
-    } else {
-      res.send(doc);
+  User.findById(
+    req.params.id,
+    ["displayname", "createdMemes", "username"],
+    (err, doc) => {
+      if (err) {
+        res.status(400);
+        res.send(err);
+      } else {
+        res.send(doc);
+      }
     }
-  });
+  );
 });
 
 app.get("/api/tag", (req, res) => {
@@ -220,7 +210,7 @@ app.get("/api/tag", (req, res) => {
 });
 
 app.get("/api/category", (req, res) => {
-  Category.find(req.body, "title", (err, doc) => {
+  Category.find({}, (err, doc) => {
     if (err) {
       res.send(err);
     } else {
@@ -230,16 +220,13 @@ app.get("/api/category", (req, res) => {
 });
 
 app.get("/api/category/:id", (req, res) => {
-  Category.find(
-    { title: { $regex: new RegExp("^" + req.params.id.toLowerCase(), "i") } },
-    (err, doc) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(doc);
-      }
+  Category.findById(req.params.id, (err, doc) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(doc);
     }
-  );
+  });
 });
 
 app.get("/api/latestMeme", async (req, res) => {
@@ -252,8 +239,38 @@ app.get("/api/latestMeme", async (req, res) => {
   });
 });
 
+app.get("/api/memeByCategory/:id", (req, res) => {
+  Meme.find({ category: req.params.id }, (err, doc) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(doc);
+    }
+  });
+});
+
+app.get("/api/memeByTag/:id", (req, res) => {
+  Meme.find({ tag: req.params.id }, (err, doc) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(doc);
+    }
+  });
+});
+
+app.get("/api/memeByAuthor/:id", (req, res) => {
+  Meme.find({ createdBy: req.params.id }, (err, doc) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(doc);
+    }
+  });
+});
+
 app.get("/api/meme", (req, res) => {
-  Meme.find({}, null, { sort: { date: -1 } }, (err, doc) => {
+  Meme.find({}, null, { sort: { _id: -1 } }, (err, doc) => {
     if (err) {
       res.send(err);
     } else {
@@ -268,15 +285,39 @@ app.get("/api/meme/:id", async (req, res) => {
       res.status(400);
       res.send(err);
     } else {
-      console.log(doc.likeCount);
       res.send(doc);
     }
   });
 });
 
 app.get("/api/topMeme", async (req, res) => {
-  Meme.findOne({}, {}, { sort: { likeCount: -1 } }, (err, doc) => {
+  Meme.find({}, (err, doc) => {
     if (err) {
+      console.log(err);
+    } else {
+      const top = doc.reduce(function (prev, current) {
+        return prev.likeCount > current.likeCount ? prev : current;
+      });
+      res.send(top);
+    }
+  });
+});
+
+app.get("/api/likedMeme/:id", async (req, res) => {
+  Meme.find({ likedBy: req.params.id }, (err, doc) => {
+    if (err) {
+      res.send(400);
+      res.send(err);
+    } else {
+      res.send(doc);
+    }
+  });
+});
+
+app.get("/api/postedMeme/:id", async (req, res) => {
+  Meme.find({ createdBy: req.params.id }, (err, doc) => {
+    if (err) {
+      res.send(400);
       res.send(err);
     } else {
       res.send(doc);
@@ -286,6 +327,17 @@ app.get("/api/topMeme", async (req, res) => {
 
 app.get("/", (req, res) => {
   res.send("Server running");
+});
+
+// DELETE
+app.delete("/api/meme/:id", (req, res) => {
+  Meme.deleteOne({ _id: req.params.id }, (err, doc) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(doc);
+    }
+  });
 });
 
 app.listen(port, () => {

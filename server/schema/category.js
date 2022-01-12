@@ -6,10 +6,6 @@ const categorySchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  memes: {
-    type: [String],
-    required: false,
-  },
 });
 
 const Category = mongoose.model("category", categorySchema, "category");
