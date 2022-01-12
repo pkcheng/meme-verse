@@ -48,11 +48,14 @@ const Navbar = ({ user, setUser }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark">
       <div className="container">
-        <a className="navbar-brand" href="/">
-          <img src="/logo.png" width={"50px"} height={"50px"} />
-          &nbsp;
-          <span style={{ fontFamily: "Bebas Neue" }}>Meme Verse</span>
-        </a>
+        <Link href="/">
+          <a className="navbar-brand">
+            <img src="/logo.png" width={"50px"} height={"50px"} />
+            &nbsp;
+            <span style={{ fontFamily: "Bebas Neue" }}>Meme Verse</span>
+          </a>
+        </Link>
+
         <button
           className="navbar-toggler"
           type="button"
