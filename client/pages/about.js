@@ -17,6 +17,7 @@ const About = () => {
 
       <a
         href="https://github.com/pkcheng"
+        rel="noreferrer"
         target="_blank"
         className="btn btn-dark me-1"
         style={{ borderRadius: "50px" }}
@@ -26,6 +27,7 @@ const About = () => {
 
       <a
         href="https://www.linkedin.com/in/pkcheng"
+        rel="noreferrer"
         target="_blank"
         className="btn btn-dark"
         style={{ borderRadius: "50px" }}
