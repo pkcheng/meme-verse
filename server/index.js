@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 // Schema
 const User = require("./schema/user");
