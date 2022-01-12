@@ -17,7 +17,7 @@ const Navbar = ({ user, setUser }) => {
       typeof user == "undefined"
     ) {
       await axios
-        .post("http://localhost:5000/api/verify", {
+        .post(`${process.env.SERVER_URL}/api/verify`, {
           token: jwt,
         })
         .then((res) => {

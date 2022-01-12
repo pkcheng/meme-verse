@@ -7,7 +7,7 @@ const CategoryIndex = () => {
   const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
-    await axios.get("http://localhost:5000/api/category").then((res) => {
+    await axios.get(`${process.env.SERVER_URL}/api/category`).then((res) => {
       setCategory(res.data);
     });
   };

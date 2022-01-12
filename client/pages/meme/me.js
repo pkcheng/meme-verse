@@ -9,7 +9,7 @@ const MyMeme = ({ user }) => {
 
   const loadData = async () => {
     await axios
-      .get(`http://localhost:5000/api/postedMeme/${user._id}`)
+      .get(`${process.env.SERVER_URL}/api/postedMeme/${user._id}`)
       .then((res) => {
         setMeme(res.data);
       });

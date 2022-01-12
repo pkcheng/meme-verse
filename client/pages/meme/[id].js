@@ -33,7 +33,7 @@ const Meme = ({ user }) => {
   const loadData = async () => {
     const authorId = null;
     await axios
-      .get(`http://localhost:5000/api/meme/${id}`)
+      .get(`${process.env.SERVER_URL}/api/meme/${id}`)
       .then((res) => {
         setLikedBy(res.data.likedBy);
         setImage(res.data.image);
@@ -45,7 +45,7 @@ const Meme = ({ user }) => {
         console.log(err.response);
       });
     await axios
-      .get(`http://localhost:5000/api/user/${authorId}`)
+      .get(`${process.env.SERVER_URL}/api/user/${authorId}`)
       .then((res) => {
         setAuthor(res.data);
       })

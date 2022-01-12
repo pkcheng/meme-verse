@@ -30,7 +30,7 @@ const Post = () => {
       let image = {};
 
       await axios
-        .post("https://api.imgur.com/3/image", formdata, {
+        .post(`https://api.imgur.com/3/image`, formdata, {
           headers: { Authorization: "Client-ID 7d177a2a11aa7b1" },
         })
         .then((res) => {
@@ -42,7 +42,7 @@ const Post = () => {
       const headers = { Authorization: `Bearer ${jwt}` };
       await axios
         .post(
-          "http://localhost:5000/api/meme",
+          `${process.env.SERVER_URL}/api/meme`,
           {
             title: title,
             image: image,
@@ -59,14 +59,14 @@ const Post = () => {
   };
 
   const loadData = () => {
-    axios.get("http://localhost:5000/api/category").then((res) => {
+    axios.get(`${process.env.SERVER_URL}/api/category`).then((res) => {
       const options = res.data.map((c) => {
         return { value: c._id, label: c.title };
       });
       setCategoryOp(options);
     });
 
-    axios.get("http://localhost:5000/api/tag").then((res) => {
+    axios.get(`${process.env.SERVER_URL}/api/tag`).then((res) => {
       const options = res.data.map((c) => {
         return { value: c._id, label: c.title };
       });

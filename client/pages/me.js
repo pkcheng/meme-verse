@@ -9,7 +9,7 @@ const Me = ({ user }) => {
 
   const loadData = async () => {
     await axios
-      .get(`http://localhost:5000/api/likedMeme/${user._id}`)
+      .get(`${process.env.SERVER_URL}/api/likedMeme/${user._id}`)
       .then((res) => {
         setMeme(res.data);
       });

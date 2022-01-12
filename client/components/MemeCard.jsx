@@ -12,7 +12,7 @@ const MemeCard = ({ id, user }) => {
   const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
-    await axios.get(`http://localhost:5000/api/meme/${id}`).then((res) => {
+    await axios.get(`${process.env.SERVER_URL}/api/meme/${id}`).then((res) => {
       setLikedBy(res.data.likedBy);
       setImage(res.data.image);
       setCreatedBy(res.data.createdBy);
@@ -25,7 +25,7 @@ const MemeCard = ({ id, user }) => {
   };
 
   const handleDelete = async () => {
-    await axios.delete(`http://localhost:5000/api/meme/${id}`);
+    await axios.delete(`${process.env.SERVER_URL}/api/meme/${id}`);
     window.location.reload();
   };
 
@@ -39,7 +39,7 @@ const MemeCard = ({ id, user }) => {
 
   const handleLike = async () => {
     if (user) {
-      await axios.post("http://localhost:5000/api/likeMeme", {
+      await axios.post(`${process.env.SERVER_URL}/api/likeMeme`, {
         userId: user._id,
         memeId: id,
       });

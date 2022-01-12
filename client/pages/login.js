@@ -15,7 +15,7 @@ const Login = () => {
     event.preventDefault();
     setLoading(true);
     await axios
-      .post("http://localhost:5000/api/login", {
+      .post(`${process.env.SERVER_URL}/api/login`, {
         email: email,
         password: password,
       })

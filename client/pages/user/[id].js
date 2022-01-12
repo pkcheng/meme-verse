@@ -11,12 +11,12 @@ const User = ({ user }) => {
   const { id } = router.query;
 
   const loadData = async () => {
-    await axios.get(`http://localhost:5000/api/user/${id}`).then((res) => {
+    await axios.get(`${process.env.SERVER_URL}/api/user/${id}`).then((res) => {
       setAuthor(res.data);
     });
 
     await axios
-      .get(`http://localhost:5000/api/memeByAuthor/${id}`)
+      .get(`${process.env.SERVER_URL}/api/memeByAuthor/${id}`)
       .then((res) => {
         setMeme(res.data);
         console.log(res.data);

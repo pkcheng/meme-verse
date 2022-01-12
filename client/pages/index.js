@@ -17,16 +17,16 @@ export default function Home({ user }) {
   const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
-    await axios.get("http://localhost:5000/api/latestMeme").then((res) => {
+    await axios.get(`${process.env.SERVER_URL}/api/latestMeme`).then((res) => {
       setLatestMeme(res.data);
     });
-    await axios.get("http://localhost:5000/api/topMeme").then((res) => {
+    await axios.get(`${process.env.SERVER_URL}/api/topMeme`).then((res) => {
       setTopMeme(res.data);
     });
-    await axios.get("http://localhost:5000/api/meme").then((res) => {
+    await axios.get(`${process.env.SERVER_URL}/api/meme`).then((res) => {
       setMeme(res.data);
     });
-    await axios.get("http://localhost:5000/api/category").then((res) => {
+    await axios.get(`${process.env.SERVER_URL}/api/category`).then((res) => {
       setCategory(res.data);
     });
   };

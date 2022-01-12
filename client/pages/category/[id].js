@@ -12,12 +12,14 @@ const Category = ({ user }) => {
   const { id } = router.query;
 
   const loadData = async () => {
-    await axios.get(`http://localhost:5000/api/category/${id}`).then((res) => {
-      setCategory(res.data);
-    });
+    await axios
+      .get(`${process.env.SERVER_URL}/api/category/${id}`)
+      .then((res) => {
+        setCategory(res.data);
+      });
 
     await axios
-      .get(`http://localhost:5000/api/memeByCategory/${id}`)
+      .get(`${process.env.SERVER_URL}/api/memeByCategory/${id}`)
       .then((res) => {
         setMeme(res.data);
       });

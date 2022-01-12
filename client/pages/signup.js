@@ -16,7 +16,7 @@ const SignUp = () => {
     event.preventDefault();
     setLoading(true);
     await axios
-      .post("http://localhost:5000/api/register", {
+      .post(`${process.env.SERVER_URL}/api/register`, {
         displayname: displayname,
         username: username,
         email: email,
