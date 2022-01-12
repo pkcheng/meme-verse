@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 
 const SignUp = () => {
+  const router = useRouter();
   const [displayname, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ const SignUp = () => {
         password: password,
       })
       .then((res) => {
-        console.log(res.data);
+        router.push("/login");
       })
       .catch((err) => {
         if (err.response.data.code === 11000) {
