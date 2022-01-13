@@ -86,10 +86,14 @@ const Navbar = ({ user, setUser }) => {
             ) : (
               ""
             )}
-
             <li className="nav-item mx-2">
               <Link href="/category">
                 <a className="nav-link">Category</a>
+              </Link>
+            </li>
+            <li className="nav-item mx-2">
+              <Link href="/trending">
+                <a className="nav-link">Trending</a>
               </Link>
             </li>
             <li className="nav-item mx-2">

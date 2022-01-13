@@ -6,17 +6,43 @@ import Link from "next/link";
 
 const MemeCard = ({ id, user }) => {
   const router = useRouter();
-  const [likedBy, setLikedBy] = useState([]);
+  const [like, setLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   const [createdBy, setCreatedBy] = useState("");
   const [image, setImage] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
     await axios.get(`${process.env.SERVER_URL}/api/meme/${id}`).then((res) => {
-      setLikedBy(res.data.likedBy);
-      setImage(res.data.image);
-      setCreatedBy(res.data.createdBy);
+      if (res.data) {
+        if (user) {
+          setLike(res.data.likedBy.includes(user._id));
+        }
+        setLikeCount(res.data.likedBy.length);
+        setImage(res.data.image);
+        setCreatedBy(res.data.createdBy);
+        setLoading(false);
+      } else {
+        window.location.reload();
+      }
     });
+  };
+
+  const handleLike = async () => {
+    if (user) {
+      await axios.post(`${process.env.SERVER_URL}/api/likeMeme`, {
+        userId: user._id,
+        memeId: id,
+      });
+      setLike(!like);
+      if (like) {
+        setLikeCount(likeCount - 1);
+      } else {
+        setLikeCount(likeCount + 1);
+      }
+    } else {
+      router.push("/login");
+    }
   };
 
   const handleShare = () => {
@@ -31,23 +57,9 @@ const MemeCard = ({ id, user }) => {
 
   useEffect(async () => {
     if (id) {
-      setLoading(true);
       await loadData();
-      setLoading(false);
     }
   }, [id]);
-
-  const handleLike = async () => {
-    if (user) {
-      await axios.post(`${process.env.SERVER_URL}/api/likeMeme`, {
-        userId: user._id,
-        memeId: id,
-      });
-      await loadData();
-    } else {
-      router.push("/login");
-    }
-  };
 
   return (
     <>
@@ -104,13 +116,13 @@ const MemeCard = ({ id, user }) => {
                 className={
                   !user
                     ? "bi bi-hand-thumbs-up"
-                    : likedBy.includes(user._id)
+                    : like
                     ? "bi bi-hand-thumbs-up-fill"
                     : "bi bi-hand-thumbs-up"
                 }
               ></i>
               &nbsp;
-              {likedBy.length}
+              {likeCount}
             </button>
             <button className="btn btn-right btn-light" onClick={handleShare}>
               <i className="bi bi-share"></i>

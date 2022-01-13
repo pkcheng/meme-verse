@@ -113,34 +113,28 @@ app.post("/api/meme", (req, res) => {
   const token = req.headers["authorization"].split(" ")[1];
   jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
     if (err) {
+      res.send(400);
+      res.send(err);
     } else {
-      User.findById(data.user["_id"], (err, usr) => {
-        if (err) {
-          console.log(err);
-        } else {
-          // Create Meme
-          var meme = new Meme({
-            title: req.body.title,
-            image: req.body.image,
-            category: req.body.category,
-            tag: req.body.tag,
-            date: new Date(),
-            createdBy: usr["_id"],
-          });
-
-          // Save Meme
-          meme
-            .save()
-            .then((doc) => {
-              usr.createdMemes.push(doc._id);
-              usr.save();
-              res.send(doc);
-            })
-            .catch((err) => {
-              res.status(404).send(err);
-            });
-        }
+      // Create Meme
+      var meme = new Meme({
+        title: req.body.title,
+        image: req.body.image,
+        category: req.body.category,
+        tag: req.body.tag,
+        date: new Date(),
+        createdBy: data.user["_id"],
       });
+
+      // Save Meme
+      meme
+        .save()
+        .then((doc) => {
+          res.send(doc);
+        })
+        .catch((err) => {
+          res.status(404).send(err);
+        });
     }
   });
 });
@@ -150,7 +144,8 @@ app.post("/api/likeMeme", async (req, res) => {
   const memeId = req.body.memeId;
   User.findById(userId, (err, doc) => {
     if (err) {
-      console.log(err);
+      res.send(400);
+      res.send(err);
     } else {
       if (!doc.likedMemes.includes(memeId)) {
         doc.likedMemes.push(memeId);
@@ -166,18 +161,23 @@ app.post("/api/likeMeme", async (req, res) => {
 
   Meme.findById(memeId, (err, doc) => {
     if (err) {
-      console.log(err);
+      res.send(400);
+      res.send(err);
     } else {
-      if (!doc.likedBy.includes(userId)) {
-        doc.likedBy.push(userId);
+      if (doc === null) {
+        res.send("Meme already deleted");
       } else {
-        const index = doc.likedBy.indexOf(userId);
-        if (index > -1) {
-          doc.likedBy.splice(index, 1);
+        if (!doc.likedBy.includes(userId)) {
+          doc.likedBy.push(userId);
+        } else {
+          const index = doc.likedBy.indexOf(userId);
+          if (index > -1) {
+            doc.likedBy.splice(index, 1);
+          }
         }
+        doc.save();
+        res.send("Done");
       }
-      doc.save();
-      res.send("Done");
     }
   });
 });
@@ -269,8 +269,19 @@ app.get("/api/memeByAuthor/:id", (req, res) => {
   });
 });
 
+app.get("/api/trendingMeme", (req, res) => {
+  Meme.find({}, ["_id", "title", "likedBy"], (err, doc) => {
+    if (err) {
+      res.send(err);
+    } else {
+      doc.sort((a, b) => (a.likedBy.length > b.likedBy.length ? -1 : 1));
+      res.send(doc);
+    }
+  });
+});
+
 app.get("/api/meme", (req, res) => {
-  Meme.find({}, null, { sort: { _id: -1 } }, (err, doc) => {
+  Meme.find({}, ["_id"], { sort: { _id: -1 } }, (err, doc) => {
     if (err) {
       res.send(err);
     } else {

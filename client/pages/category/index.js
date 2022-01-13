@@ -32,16 +32,24 @@ const CategoryIndex = () => {
             {category.map((c, index) => {
               return (
                 <div
-                  className="col-lg-4 col-md-6 col-sm-12 my-2 text-center p-3"
+                  className="col-lg-4 col-md-6 col-sm-12 my-2 text-center p-1"
                   key={index}
                 >
                   <Link href={`/category/${c._id}`}>
-                    <a
-                      className="btn btn-dark category-btn w-75 py-5"
-                      style={{ borderRadius: "50px" }}
-                    >
-                      {c.title}
-                    </a>
+                    <div className="property-card mx-auto">
+                      <div
+                        className="property-image"
+                        style={{
+                          backgroundImage: `url(${c.image})`,
+                        }}
+                      >
+                        <div className="property-image-title"></div>
+                      </div>
+
+                      <div className="property-description">
+                        <h5 className="mt-1">{c.title}</h5>
+                      </div>
+                    </div>
                   </Link>
                 </div>
               );

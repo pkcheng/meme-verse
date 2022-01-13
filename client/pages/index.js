@@ -65,7 +65,7 @@ export default function Home({ user }) {
             </div>
             {/* Trending */}
             <div className="row mt-2">
-              <h3>Trending</h3>
+              <h3>Recent</h3>
               {meme.map((m, index) => {
                 return (
                   <div className="col-lg-4 col-sm-12 col-md-6 mb-3" key={index}>

@@ -54,7 +54,11 @@ const Post = () => {
         .then((res) => {});
 
       setLoading(false);
-      window.location.reload();
+      swal({
+        icon: "success",
+      }).then((v) => {
+        window.location.reload();
+      });
     }
   };
 
@@ -138,7 +142,6 @@ const Post = () => {
                   options={tagOp}
                   onChange={(t) => {
                     setTag(t);
-                    console.log(t);
                   }}
                 />
               </div>

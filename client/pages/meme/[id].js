@@ -8,6 +8,8 @@ const Meme = ({ user }) => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState({});
   const [likedBy, setLikedBy] = useState([]);
+  const [like, setLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   const [tag, setTag] = useState([]);
   const [author, setAuthor] = useState({ username: "", displayname: "" });
   const [loading, setLoading] = useState(false);
@@ -19,13 +21,18 @@ const Meme = ({ user }) => {
         userId: user._id,
         memeId: id,
       });
-      await loadData();
+      setLike(!like);
+      if (like) {
+        setLikeCount(likeCount - 1);
+      } else {
+        setLikeCount(likeCount + 1);
+      }
     } else {
       router.push("/login");
     }
   };
 
-  const share = () => {
+  const handleShare = () => {
     navigator.clipboard.writeText(`${window.location.host}/meme/${id}`);
     swal("Link Copied", "Paste the link and share the meme with others!");
   };
@@ -36,6 +43,10 @@ const Meme = ({ user }) => {
       .get(`${process.env.SERVER_URL}/api/meme/${id}`)
       .then((res) => {
         setLikedBy(res.data.likedBy);
+        if (user) {
+          setLike(res.data.likedBy.includes(user._id));
+        }
+        setLikeCount(res.data.likedBy.length);
         setImage(res.data.image);
         setTitle(res.data.title);
         setTag(res.data.tag);
@@ -99,17 +110,17 @@ const Meme = ({ user }) => {
                           className={
                             !user
                               ? "bi bi-hand-thumbs-up"
-                              : likedBy.includes(user._id)
+                              : like
                               ? "bi bi-hand-thumbs-up-fill"
                               : "bi bi-hand-thumbs-up"
                           }
                         ></i>
                         &nbsp;
-                        {likedBy.length}
+                        {likeCount}
                       </button>
                       <button
                         className="btn btn-right btn-light"
-                        onClick={share}
+                        onClick={handleShare}
                       >
                         <i className="bi bi-share"></i>
                       </button>
