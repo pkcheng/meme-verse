@@ -88,7 +88,7 @@ const Login = () => {
               className="btn btn-secondary w-100 mt-2"
               onClick={handleGoogleLogin}
             >
-              <i class="bi bi-google"></i>&nbsp; Log in with Google
+              <i className="bi bi-google"></i>&nbsp; Log in with Google
             </button>
           </form>
         </div>
