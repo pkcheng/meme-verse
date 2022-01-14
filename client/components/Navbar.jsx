@@ -38,11 +38,23 @@ const Navbar = ({ user, setUser }) => {
     }
   };
 
+  const handleSignOut = async () => {
+    removeCookie("meme-verse-jwt");
+    if (user.access_token) {
+      await axios.post(
+        `https://accounts.google.com/o/oauth2/revoke?token=${user.access_token}`
+      );
+    }
+    setUser(null);
+    window.location.reload();
+  };
+
   useEffect(async () => {
     setLoading(true);
     await loadCurrentUser();
     setLoading(false);
     validatePath();
+    console.log(user);
   }, [router.pathname, user]);
 
   return (
@@ -130,15 +142,7 @@ const Navbar = ({ user, setUser }) => {
                   </Link>
                 </li>
                 <li>
-                  <a
-                    className="dropdown-item"
-                    href="#"
-                    onClick={() => {
-                      removeCookie("meme-verse-jwt");
-                      setUser(null);
-                      window.location.reload();
-                    }}
-                  >
+                  <a className="dropdown-item" href="#" onClick={handleSignOut}>
                     Sign Out
                   </a>
                 </li>

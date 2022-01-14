@@ -30,6 +30,10 @@ const Login = () => {
     setLoading(false);
   };
 
+  const handleGoogleLogin = async () => {
+    router.push(process.env.GOOGLE_OAUTH_URL);
+  };
+
   return (
     <>
       <div className="row text-center">
@@ -78,6 +82,13 @@ const Login = () => {
             </div>
             <button type="submit" className="btn btn-dark w-100">
               Log In
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary w-100 mt-2"
+              onClick={handleGoogleLogin}
+            >
+              <i class="bi bi-google"></i>&nbsp; Log in with Google
             </button>
           </form>
         </div>

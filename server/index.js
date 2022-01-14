@@ -1,4 +1,5 @@
 const express = require("express");
+const axios = require("axios");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
@@ -44,6 +45,51 @@ app.post("/api/login", (req, res) => {
       }
     }
   });
+});
+
+app.post("/api/googleLogin", async (req, res) => {
+  await axios
+    .get("https://www.googleapis.com/oauth2/v1/userinfo", {
+      headers: { authorization: `Bearer ${req.body.token}` },
+    })
+    .then((doc) => {
+      User.findOne({ email: doc.data.email }, (err, usr) => {
+        if (!usr) {
+          const newUser = new User({
+            email: doc.data.email,
+            displayname: doc.data.name,
+            username: doc.data.name,
+            password: "Google",
+            googleId: doc.data.id,
+          });
+          newUser.save().then((newUsr) => {
+            let temp = newUsr.toObject();
+            temp.access_token = req.body.token;
+            jwt.sign({ user: temp }, process.env.JWT_SECRET, (err, token) => {
+              res.send({
+                auth: true,
+                token: token,
+                message: "Login successfully",
+              });
+            });
+          });
+        } else {
+          let temp = usr.toObject();
+          temp.access_token = req.body.token;
+          jwt.sign({ user: temp }, process.env.JWT_SECRET, (err, token) => {
+            res.send({
+              auth: true,
+              token: token,
+              message: "Login successfully",
+            });
+          });
+        }
+      });
+    })
+    .catch((err) => {
+      res.status(400);
+      res.send(err);
+    });
 });
 
 app.post("/api/register", async (req, res, next) => {
@@ -142,22 +188,6 @@ app.post("/api/meme", (req, res) => {
 app.post("/api/likeMeme", async (req, res) => {
   const userId = req.body.userId;
   const memeId = req.body.memeId;
-  User.findById(userId, (err, doc) => {
-    if (err) {
-      res.send(400);
-      res.send(err);
-    } else {
-      if (!doc.likedMemes.includes(memeId)) {
-        doc.likedMemes.push(memeId);
-      } else {
-        const index = doc.likedMemes.indexOf(memeId);
-        if (index > -1) {
-          doc.likedMemes.splice(index, 1);
-        }
-      }
-      doc.save();
-    }
-  });
 
   Meme.findById(memeId, (err, doc) => {
     if (err) {
