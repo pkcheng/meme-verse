@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 
-const Meme = ({ user }) => {
+const Meme = ({ user, meme }) => {
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState({});
-  const [likedBy, setLikedBy] = useState([]);
+  const [title, setTitle] = useState(meme.title);
+  const [image, setImage] = useState(meme.image);
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [tag, setTag] = useState([]);
@@ -42,7 +41,6 @@ const Meme = ({ user }) => {
     await axios
       .get(`${process.env.SERVER_URL}/api/meme/${id}`)
       .then((res) => {
-        setLikedBy(res.data.likedBy);
         if (user) {
           setLike(res.data.likedBy.includes(user._id));
         }
@@ -53,6 +51,7 @@ const Meme = ({ user }) => {
         authorId = res.data.createdBy;
       })
       .catch((err) => {
+        router.push("/");
         console.log(err.response);
       });
     await axios
@@ -170,5 +169,21 @@ const Meme = ({ user }) => {
     </>
   );
 };
+
+export async function getServerSideProps(context) {
+  const { id } = context.query;
+  let meme = { title: "", image: { link: "" } };
+  await axios
+    .get(`${process.env.SERVER_URL}/api/meme/${id}`)
+    .then((res) => {
+      meme = res.data;
+    })
+    .catch((err) => {});
+  return {
+    props: {
+      meme: meme,
+    },
+  };
+}
 
 export default Meme;
